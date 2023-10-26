@@ -8,7 +8,7 @@
     pri_domain_name: 'vagrant.local'
     ssh_key_path: '.vagrant/machines/{{ inventory_hostname }}/virtualbox/private_key'
     update_host_vars: true
-  roles:
+  roles: 
   tasks:
     - name: updating apt cache (Debian)
       apt:
@@ -82,16 +82,39 @@
       when: >
             ansible_os_family == "openSUSE Leap"
 
-    - name: installing python pip
-      easy_install:
-        name: "pip"
-        state: present
+    - name: apt update
+      shell:
+        "apt update"
+
+    - name: download python file
+      get_url:
+        url: 
+          "https://bootstrap.pypa.io/pip/2.7/get-pip.py"
+        dest:
+          "/home/vagrant/get-pip.py"
+        mode:
+          "755"
+      
+    - name: install pip  
+      shell:
+        "python3 /home/vagrant/get-pip.py"
+
+    - name: Install or update pip
+      community.general.easy_install:
+        name: pip
+        state: latest
+
+    #- name: upgrade python3
+    #  shell: 
+    #    "apt install python3.9"
 
     - name: installing ansible
-      pip:
-        name: "ansible"
-        state: present
-        version: 1.9.6
+      shell:
+        "apt install ansible"
+      #pip:
+      #  name: "ansible"
+      #  state: present
+        #version: 1.9.6
 
     - name: ensuring host_vars directory exists
       file:

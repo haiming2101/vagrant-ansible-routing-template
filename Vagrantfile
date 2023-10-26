@@ -164,7 +164,7 @@ subnet = "192.168.202."
 subnet_ip_start = 200
 
 Vagrant.configure(2) do |config|
-
+  config.vm.synced_folder ".", "/vagrant", disabled: true
   #Iterate over nodes
   (1..N).each do |node_id|
     nid = (node_id - 1)
@@ -299,7 +299,8 @@ Vagrant.configure(2) do |config|
       if provision_nodes
         if node_id == N
           node.vm.provision "ansible" do |ansible|
-            ansible.limit = "all"
+            ansible.verbose = "vv"
+			ansible.limit = "all"
             #runs bootstrap Ansible playbook
             ansible.playbook = "bootstrap.yml"
           end
